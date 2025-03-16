@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Logo -->
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="AI Resume Generator Logo">
+        </div>
+
+        <div class="header-icon">
+            <i class="fas fa-file-alt"></i>
+        </div>
+        <h1>AI Resume Generator</h1>
+        
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-magic"></i>
+                <div class="feature-title">AI-Powered</div>
+                <div class="feature-desc">Optimized for job requirements</div>
+            </div>
+            <div class="feature">
+                <i class="fas fa-bolt"></i>
+                <div class="feature-title">Instant</div>
+                <div class="feature-desc">Results in seconds</div>
+            </div>
+            <div class="feature">
+                <i class="fas fa-check-circle"></i>
+                <div class="feature-title">Tailored</div>
+                <div class="feature-desc">Personalized for your skills</div>
+            </div>
+        </div>
+        
+        <form action="/generate" method="POST" enctype="multipart/form-data" id="resumeForm">
+            <div class="form-group">
+                <label for="job_description">Job Description:</label>
+                <textarea id="job_description" name="job_description" placeholder="Paste the job description here to tailor your resume..." required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="resume_file">Upload Your Resume (Optional):</label>
+                <div class="file-input-container">
+                    <div class="file-input-label">
+                        <i class="fas fa-cloud-upload-alt"></i> Choose File
+                    </div>
+                    <input type="file" id="resume_file" name="resume_file" accept=".txt,.md,.pdf,.docx">
+                    <div class="file-name" id="fileName">No file chosen</div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="template">Resume Template:</label>
+                <select id="template" name="template">
+                    <option value="">Select a Template</option>
+                    <option value="template1">Professional</option>
+                    <option value="template2">Creative</option>
+                    <option value="template3">Executive</option>
+                    <option value="template4">Technical</option>
+                </select>
+                
+                <div class="template-preview">
+                    <div class="template-option" data-template="template1">
+                        <img src="{{ url_for('static', filename='images/professional.png') }}" alt="Professional template">
+                        <div class="template-name">Professional</div>
+                    </div>
+                    <div class="template-option" data-template="template2">
+                        <img src="{{ url_for('static', filename='images/creative.png') }}" alt="Creative template">
+                        <div class="template-name">Creative</div>
+                    </div>
+                    <div class="template-option" data-template="template3">
+                        <img src="{{ url_for('static', filename='images/executive.png') }}" alt="Executive template">
+                        <div class="template-name">Executive</div>
+                    </div>
+                    <div class="template-option" data-template="template4">
+                        <img src="{{ url_for('static', filename='images/technical.png') }}" alt="Technical template">
+                        <div class="template-name">Technical</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="button-container">
+                <button type="submit" id="generateBtn">
+                    <i class="fas fa-wand-sparkles"></i> Generate Resume
+                </button>
+            </div>
+            
+            <div class="loading-container">
+                <div class="loading-spinner" id="loadingSpinner"></div>
+                <div class="loading-text" id="loadingText">Generating your optimized resume...</div>
+            </div>
+        </form>
+        
+        <div class="toast" id="toast">
+            <i class="fas fa-check-circle"></i>
+            <span id="toastMessage"></span>
+        </div>
+    </div>
+    
+    <script>
+        // File input handling
+        document.getElementById('resume_file').addEventListener('change', function(e) {
+            var fileName = e.target.files[0] ? e.target.files[0].name : 'No file chosen';
+            document.getElementById('fileName').textContent = fileName;
+            
+            if (e.target.files[0]) {
+                showToast('File uploaded successfully!');
+            }
+        });
+        
+        // Template selection
+        const templateOptions = document.querySelectorAll('.template-option');
+        const templateSelect = document.getElementById('template');
+        
+        templateOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const templateValue = this.getAttribute('data-template');
+                
+                // Remove selected class from all options
+                templateOptions.forEach(opt => opt.classList.remove('selected'));
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+                
+                // Update select value
+                templateSelect.value = templateValue;
+            });
+        });
+        
+        // Form submission
+        document.getElementById('resumeForm').addEventListener('submit', function() {
+            document.getElementById('loadingSpinner').style.display = 'block';
+            document.getElementById('loadingText').style.display = 'block';
+            document.getElementById('generateBtn').disabled = true;
+        });
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Generated Resume</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <h1>Your Resume</h1>
+        
+        <div class="resume-content">
+            {{ resume_content | safe }}
+        </div>
+        
+        <div class="resume-actions">
+            <button class="action-btn primary" id="downloadBtn">
+                <i class="fas fa-download"></i> Download PDF
+            </button>
+            <button class="action-btn secondary" id="copyBtn">
+                <i class="fas fa-copy"></i> Copy Text
+            </button>
+            <button class="action-btn secondary" id="editBtn">
+                <i class="fas fa-pencil-alt"></i> Edit
+            </button>
+        </div>
+        
+        <a href="/" class="return-link">
+            <i class="fas fa-arrow-left"></i> Create Another Resume
+        </a>
+        
+        <div class="toast" id="toast">
+            <i class="fas fa-check-circle"></i>
+            <span id="toastMessage"></span>
+        </div>
+    </div>
+    
+    <script>
+        // Copy to clipboard functionality
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            const content = document.querySelector('.resume-content').innerText;
+            navigator.clipboard.writeText(content).then(() => {
+                showToast('Resume copied to clipboard!');
+            }).catch(err => {
+                showToast('Failed to copy. Please try again.');
+            });
+        });
+        
+        // Download as PDF functionality
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            // Redirect to the backend endpoint to generate and download the PDF
+            window.location.href = '/download-pdf';
+        });
+        
+        // Edit functionality
+        document.getElementById('editBtn').addEventListener('click', function() {
+            // This would typically bring up an edit interface
+            // For demo purposes, we'll just show a toast
+            showToast('Edit feature coming soon!');
+        });
+        
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
